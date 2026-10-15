@@ -83,13 +83,23 @@ def build_options(mode, quality, outtmpl, on_progress, on_post, thumbnail=False)
                 "preferredquality": quality,
             }],
         })
+
     else:
         opts.update({
-            "format": (f"bestvideo[ext=mp4][height<={quality}]+bestaudio[ext=m4a]"
-                       f"/best[ext=mp4][height<={quality}]/best"),
+
+            "format": (
+                f"bestvideo[height<={quality}]+bestaudio/"
+                f"best[height<={quality}]"
+            ),
+
             "merge_output_format": "mp4",
-            "postprocessors": [{"key": "FFmpegVideoRemuxer", "preferedformat": "mp4"}],
+
+            "postprocessors": [{
+                "key": "FFmpegVideoRemuxer",
+                "preferedformat": "mp4",
+            }],
         })
+
     if thumbnail:
         opts["writethumbnail"] = True
         opts["postprocessors"].append({
