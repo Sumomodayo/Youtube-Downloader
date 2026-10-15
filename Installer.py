@@ -9,6 +9,8 @@ import webbrowser
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
 
+from i18n import Translator, lang_switch
+
 APP_NAME = "YDL"
 FONT = "Yu Gothic UI"
 AUTHOR = "すも"
@@ -42,7 +44,7 @@ TCL_PROBE = (
     "print(tk)\n"
 )
 
-PAGE_NAMES = ["同意", "オプション", "インストール先", "インストール"]
+PAGE_KEYS = ["p_agree", "p_options", "p_location", "p_install"]
 
 C = dict(
     bg="#171A23",
@@ -56,30 +58,176 @@ C = dict(
     error="#FF7A8A",
 )
 
-TERMS = [
-    ("■ 1. 個人制作ソフトウェアについて", [
-        "YDL（YouTube ダウンローダー）は、個人が制作したソフトウェアです。",
-        "本ソフトウェアの使用は、利用者自身の責任で行ってください。",
-    ]),
-    ("■ 2. ダウンロードに関する注意", [
-        "本ソフトウェアは、YouTubeの動画から音声（MP3）または動画（MP4）を取得するためのツールです。",
-        "ダウンロードは、著作権法およびYouTubeの利用規約を守って行ってください。",
-        "自分で投稿した動画や、権利者からダウンロードの許可を得ている動画など、利用する権利があるコンテンツを対象としています。",
-        "第三者が権利を持つコンテンツを、許可なくダウンロード・複製・配布・公開することは避けてください。",
-    ]),
-    ("■ 3. 免責事項", [
-        "本ソフトウェアの使用によって発生した損害、トラブル、データの損失などについて、制作者は責任を負いません。",
-        "本ソフトウェアの正常な動作、継続的な提供、すべての動画への対応を保証するものではありません。",
-        "YouTubeの仕様変更などにより、予告なく一部または全部の機能が使用できなくなる場合があります。",
-    ]),
-    ("■ 4. 再配布・改変について", [
-        "本ソフトウェアの再配布、改変、商用利用については、制作者が別途定める条件に従ってください。",
-        "明示的な許可がない場合、制作者の配布物を自分の作品として公開しないでください。",
-    ]),
-    ("■ 5. 利用について", [
-        "本ソフトウェアを使用した時点で、利用者は本注意事項を確認したものとします。",
-    ]),
-]
+TERMS = {
+    "ja": [
+        ("■ 1. 個人制作ソフトウェアについて", [
+            "YDL（YouTube ダウンローダー）は、個人が制作したソフトウェアです。",
+            "本ソフトウェアの使用は、利用者自身の責任で行ってください。",
+        ]),
+        ("■ 2. ダウンロードに関する注意", [
+            "本ソフトウェアは、YouTubeの動画から音声（MP3）または動画（MP4）を取得するためのツールです。",
+            "ダウンロードは、著作権法およびYouTubeの利用規約を守って行ってください。",
+            "自分で投稿した動画や、権利者からダウンロードの許可を得ている動画など、利用する権利があるコンテンツを対象としています。",
+            "第三者が権利を持つコンテンツを、許可なくダウンロード・複製・配布・公開することは避けてください。",
+        ]),
+        ("■ 3. 免責事項", [
+            "本ソフトウェアの使用によって発生した損害、トラブル、データの損失などについて、制作者は責任を負いません。",
+            "本ソフトウェアの正常な動作、継続的な提供、すべての動画への対応を保証するものではありません。",
+            "YouTubeの仕様変更などにより、予告なく一部または全部の機能が使用できなくなる場合があります。",
+        ]),
+        ("■ 4. 再配布・改変について", [
+            "本ソフトウェアの再配布、改変、商用利用については、制作者が別途定める条件に従ってください。",
+            "明示的な許可がない場合、制作者の配布物を自分の作品として公開しないでください。",
+        ]),
+        ("■ 5. 利用について", [
+            "本ソフトウェアを使用した時点で、利用者は本注意事項を確認したものとします。",
+        ]),
+    ],
+    "en": [
+        ("■ 1. About this personal software", [
+            "YDL (YouTube Downloader) is software created by an individual.",
+            "Please use this software at your own responsibility.",
+        ]),
+        ("■ 2. Notes on downloading", [
+            "This software is a tool for obtaining audio (MP3) or video (MP4) from YouTube videos.",
+            "Please download only in compliance with copyright law and YouTube's Terms of Service.",
+            "It is intended for content you have the right to use, such as videos you uploaded yourself or videos for which the rights holder has granted permission to download.",
+            "Please do not download, copy, distribute, or publish content owned by third parties without permission.",
+        ]),
+        ("■ 3. Disclaimer", [
+            "The author is not responsible for any damage, trouble, or data loss arising from the use of this software.",
+            "There is no guarantee that this software will work correctly, remain available, or support every video.",
+            "Some or all features may stop working without notice due to changes in YouTube, etc.",
+        ]),
+        ("■ 4. Redistribution and modification", [
+            "Redistribution, modification, and commercial use of this software are subject to the conditions separately set by the author.",
+            "Without explicit permission, do not publish the author's distributed files as your own work.",
+        ]),
+        ("■ 5. Use of this software", [
+            "By using this software, you are deemed to have read and accepted these notices.",
+        ]),
+    ],
+}
+
+STRINGS = {
+    "ja": {
+        "setup_title": "YDL セットアップ",
+        "p_agree": "同意", "p_options": "オプション",
+        "p_location": "インストール先", "p_install": "インストール",
+        "terms_title": "利用規約・注意事項",
+        "terms_sub": "内容をお読みのうえ、同意する場合は「同意する」を押してください。",
+        "opt_title": "オプションの選択",
+        "opt_sub": "インストール時の追加設定を選んでください。",
+        "opt_shortcut": "デスクトップにショートカットを作成する",
+        "opt_launch": "完了したら YDL を起動する",
+        "loc_title": "インストール先の選択",
+        "loc_sub": "YDL をインストールするフォルダを選んでください。",
+        "loc_note": "インストールにはビルドを行うため、数分かかります。",
+        "change": "変更",
+        "install_title": "インストール",
+        "preparing": "準備しています…",
+        "btn_disagree": "同意しない", "btn_agree": "同意する",
+        "btn_back": "戻る", "btn_next": "次へ",
+        "btn_install": "インストール", "btn_installing": "インストール中…",
+        "btn_done": "完了", "btn_retry": "もう一度",
+        "quit_title": "セットアップを終了",
+        "quit_msg": "同意しない場合はインストールできません。\n終了しますか？",
+        "launch_fail_title": "起動に失敗",
+        "launch_fail_msg": "YDL を起動できませんでした:\n{err}",
+        "closing_title": "インストール中です",
+        "closing_msg": "インストールを中止して閉じますか？",
+        "choose_dir_title": "インストール先のフォルダを選択",
+        "step_fmt": "ステップ {n} / {total}  {text}",
+        "s_python": "Python を確認しています",
+        "s_pip": "必要なライブラリをインストールしています",
+        "s_ydl": "YDL.exe をビルドしています（数分かかります）",
+        "s_unins": "YDL-uninstaller.exe をビルドしています",
+        "s_copy": "インストールしています",
+        "python_not_found": "tkinter 付きの Python 3 が見つかりません。",
+        "tcl_unknown": "（Tcl/Tk の場所を特定できませんでした。PyInstaller の自動検出に任せます）",
+        "err_cancelled": "中止しました",
+        "err_cmd": "コマンドが失敗しました（終了コード {code}）。ログを確認してください。",
+        "err_mkdir": "インストール先を作成できません: {err}\n「戻る」で別の場所（書き込めるフォルダ）を選んでください。",
+        "err_noexe": "{name} が作成されませんでした。ログを確認してください。",
+        "err_perm": "YDL が起動している可能性があります。YDL を終了してから、もう一度実行してください。",
+        "copied": "コピーしました: {name}",
+        "reg_ok": "「設定 > アプリ」に登録しました",
+        "reg_fail": "（アプリ一覧への登録に失敗しました: {err}）",
+        "sc_ok": "デスクトップにショートカットを作成しました",
+        "sc_fail": "（ショートカットの作成に失敗しました: {err}）",
+        "done_launch": "インストールが完了しました。「完了」を押すと YDL が起動します。",
+        "done_close": "インストールが完了しました。「完了」を押して閉じてください。",
+        "done_log": "完了: {exe}",
+        "fail_status": "失敗しました: {message}",
+        "fail_log": "失敗: {message}",
+        "py_title": "Python が必要です",
+        "py_msg": ("ビルドには Python 3 が必要です。\n\n"
+                   "Python のダウンロードページを開きますか？\n\n"
+                   "インストールのときは、次の2点に注意してください。\n"
+                   "・「Add python.exe to PATH」にチェックを入れる\n"
+                   "・「tcl/tk and IDLE」を外さない"),
+    },
+    "en": {
+        "setup_title": "YDL Setup",
+        "p_agree": "Agree", "p_options": "Options",
+        "p_location": "Location", "p_install": "Install",
+        "terms_title": "Terms of Use & Notices",
+        "terms_sub": "Please read the following and click \"I Agree\" if you accept.",
+        "opt_title": "Select Options",
+        "opt_sub": "Choose additional settings for the installation.",
+        "opt_shortcut": "Create a desktop shortcut",
+        "opt_launch": "Launch YDL when finished",
+        "loc_title": "Select Install Location",
+        "loc_sub": "Choose the folder where YDL will be installed.",
+        "loc_note": "Installation involves a build step and takes a few minutes.",
+        "change": "Change",
+        "install_title": "Install",
+        "preparing": "Preparing…",
+        "btn_disagree": "I Disagree", "btn_agree": "I Agree",
+        "btn_back": "Back", "btn_next": "Next",
+        "btn_install": "Install", "btn_installing": "Installing…",
+        "btn_done": "Finish", "btn_retry": "Retry",
+        "quit_title": "Exit Setup",
+        "quit_msg": "YDL cannot be installed unless you agree.\nExit Setup?",
+        "launch_fail_title": "Launch failed",
+        "launch_fail_msg": "Could not launch YDL:\n{err}",
+        "closing_title": "Installation in progress",
+        "closing_msg": "Cancel the installation and close?",
+        "choose_dir_title": "Select install folder",
+        "step_fmt": "Step {n} / {total}  {text}",
+        "s_python": "Checking Python",
+        "s_pip": "Installing required libraries",
+        "s_ydl": "Building YDL.exe (this takes a few minutes)",
+        "s_unins": "Building YDL-uninstaller.exe",
+        "s_copy": "Installing",
+        "python_not_found": "Python 3 with tkinter was not found.",
+        "tcl_unknown": "(Could not locate Tcl/Tk. Leaving it to PyInstaller's auto-detection.)",
+        "err_cancelled": "Cancelled",
+        "err_cmd": "Command failed (exit code {code}). Please check the log.",
+        "err_mkdir": "Cannot create the install folder: {err}\nPress \"Back\" and choose another (writable) location.",
+        "err_noexe": "{name} was not created. Please check the log.",
+        "err_perm": "YDL may be running. Please close YDL and try again.",
+        "copied": "Copied: {name}",
+        "reg_ok": "Registered in Settings > Apps",
+        "reg_fail": "(Failed to register in the apps list: {err})",
+        "sc_ok": "Created a desktop shortcut",
+        "sc_fail": "(Failed to create the shortcut: {err})",
+        "done_launch": "Installation complete. Click \"Finish\" to launch YDL.",
+        "done_close": "Installation complete. Click \"Finish\" to close.",
+        "done_log": "Done: {exe}",
+        "fail_status": "Failed: {message}",
+        "fail_log": "Failed: {message}",
+        "py_title": "Python is required",
+        "py_msg": ("Python 3 is required to build YDL.\n\n"
+                   "Open the Python download page?\n\n"
+                   "When installing, please note the following:\n"
+                   "- Check \"Add python.exe to PATH\"\n"
+                   "- Do not uncheck \"tcl/tk and IDLE\""),
+    },
+}
+
+tr = Translator(STRINGS)
+
 
 def resource_path(relative: str) -> str:
     base = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))
@@ -145,7 +293,7 @@ def register_uninstall(install_dir: str):
     exe = os.path.join(install_dir, "YDL.exe")
     uninstaller = os.path.join(install_dir, "YDL-uninstaller.exe")
     with winreg.CreateKey(winreg.HKEY_CURRENT_USER, REG_PATH) as key:
-        winreg.SetValueEx(key, "DisplayName", 0, winreg.REG_SZ, "YDL (YouTube ダウンローダー)")
+        winreg.SetValueEx(key, "DisplayName", 0, winreg.REG_SZ, "YDL (YouTube Downloader)")
         winreg.SetValueEx(key, "DisplayIcon", 0, winreg.REG_SZ, exe)
         winreg.SetValueEx(key, "InstallLocation", 0, winreg.REG_SZ, install_dir)
         winreg.SetValueEx(key, "UninstallString", 0, winreg.REG_SZ, f'"{uninstaller}"')
@@ -172,7 +320,7 @@ class PythonMissing(BuildError):
 class Installer(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.title("YDL セットアップ")
+        self.title(tr("setup_title"))
         self.configure(bg=C["bg"])
         self.geometry("560x570")
         self.resizable(False, False)
@@ -245,18 +393,22 @@ class Installer(tk.Tk):
                        cursor="hand2")
 
     def _build(self):
-        tk.Label(self, text="YDL セットアップ", font=(FONT, 16, "bold"),
-                 bg=C["bg"], fg=C["text"], anchor="w").pack(fill="x", padx=PAD, pady=(22, 8))
+        header = tk.Frame(self, bg=C["bg"])
+        header.pack(fill="x", padx=PAD, pady=(22, 8))
+        tk.Label(header, text=tr("setup_title"), font=(FONT, 16, "bold"),
+                 bg=C["bg"], fg=C["text"], anchor="w").pack(side="left")
+        self.lang_box = lang_switch(header, tr, FONT, C["bg"], C["text"], C["faint"],
+                                    self.change_lang)
 
         self.steps_row = tk.Frame(self, bg=C["bg"])
         self.steps_row.pack(fill="x", padx=PAD)
         self.step_labels = []
-        for i, name in enumerate(PAGE_NAMES):
-            lbl = tk.Label(self.steps_row, text=f"{i + 1} {name}", font=(FONT, 9),
+        for i, key in enumerate(PAGE_KEYS):
+            lbl = tk.Label(self.steps_row, text=f"{i + 1} {tr(key)}", font=(FONT, 9),
                            bg=C["bg"], fg=C["faint"])
             lbl.pack(side="left")
             self.step_labels.append(lbl)
-            if i < len(PAGE_NAMES) - 1:
+            if i < len(PAGE_KEYS) - 1:
                 tk.Label(self.steps_row, text="  ›  ", font=(FONT, 9),
                          bg=C["bg"], fg=C["line"]).pack(side="left")
 
@@ -286,10 +438,20 @@ class Installer(tk.Tk):
             self._page_install(),
         ]
 
+    def change_lang(self, code):
+        if self.running or self.page == 3 or code == tr.lang:
+            return
+        tr.set(code)
+        page = self.page
+        for w in self.winfo_children():
+            w.destroy()
+        self.title(tr("setup_title"))
+        self._build()
+        self.show_page(page)
+
     def _page_terms(self):
         f = tk.Frame(self.body, bg=C["bg"])
-        self._heading(f, "利用規約・注意事項",
-                      "内容をお読みのうえ、同意する場合は「同意する」を押してください。")
+        self._heading(f, tr("terms_title"), tr("terms_sub"))
 
         box = tk.Frame(f, bg=C["panel"], highlightthickness=1, highlightbackground=C["line"])
         box.pack(fill="both", expand=True, pady=(12, 0))
@@ -302,7 +464,7 @@ class Installer(tk.Tk):
         sb.config(command=txt.yview)
         txt.tag_configure("h", font=(FONT, 10, "bold"), foreground=C["accent"],
                           spacing1=8, spacing3=4)
-        for heading, lines in TERMS:
+        for heading, lines in TERMS[tr.lang]:
             txt.insert("end", heading + "\n", "h")
             for line in lines:
                 txt.insert("end", line + "\n")
@@ -311,39 +473,38 @@ class Installer(tk.Tk):
 
     def _page_options(self):
         f = tk.Frame(self.body, bg=C["bg"])
-        self._heading(f, "オプションの選択", "インストール時の追加設定を選んでください。")
+        self._heading(f, tr("opt_title"), tr("opt_sub"))
         opts = tk.Frame(f, bg=C["bg"])
         opts.pack(fill="x", pady=(16, 0))
-        self.chk_shortcut = self._check(opts, "デスクトップにショートカットを作成する",
-                                        self.var_shortcut)
-        self.chk_launch = self._check(opts, "完了したら YDL を起動する", self.var_launch)
+        self.chk_shortcut = self._check(opts, tr("opt_shortcut"), self.var_shortcut)
+        self.chk_launch = self._check(opts, tr("opt_launch"), self.var_launch)
         return f
 
     def _page_location(self):
         f = tk.Frame(self.body, bg=C["bg"])
-        self._heading(f, "インストール先の選択", "YDL をインストールするフォルダを選んでください。")
+        self._heading(f, tr("loc_title"), tr("loc_sub"))
         row = tk.Frame(f, bg=C["bg"])
         row.pack(fill="x", pady=(16, 0))
         self.path_label = tk.Label(row, text=self.install_dir, font=(FONT, 9), bg=C["panel"],
                                    fg=C["text"], anchor="w", wraplength=380, justify="left",
                                    padx=10, pady=8)
         self.path_label.pack(side="left", fill="x", expand=True)
-        self.change_btn = tk.Button(row, text="変更", font=(FONT, 9), relief="flat", bd=0,
+        self.change_btn = tk.Button(row, text=tr("change"), font=(FONT, 9), relief="flat", bd=0,
                                     bg=C["panel"], fg=C["text"], activebackground=C["line"],
                                     activeforeground=C["text"], cursor="hand2", padx=14,
                                     command=self.choose_dir)
         self.change_btn.pack(side="right", fill="y", padx=(6, 0))
-        tk.Label(f, text="インストールにはビルドを行うため、数分かかります。",
-                 font=(FONT, 9), bg=C["bg"], fg=C["muted"], anchor="w").pack(fill="x", pady=(12, 0))
+        tk.Label(f, text=tr("loc_note"), font=(FONT, 9), bg=C["bg"], fg=C["muted"],
+                 anchor="w", wraplength=500, justify="left").pack(fill="x", pady=(12, 0))
         return f
 
     def _page_install(self):
         f = tk.Frame(self.body, bg=C["bg"])
-        self._heading(f, "インストール")
+        self._heading(f, tr("install_title"))
         self.bar = ttk.Progressbar(f, style="Setup.Horizontal.TProgressbar",
                                    maximum=100, mode="determinate")
         self.bar.pack(fill="x", pady=(14, 6))
-        self.step_label = tk.Label(f, text="準備しています…", font=(FONT, 9),
+        self.step_label = tk.Label(f, text=tr("preparing"), font=(FONT, 9),
                                    bg=C["bg"], fg=C["muted"], anchor="w",
                                    wraplength=500, justify="left")
         self.step_label.pack(fill="x")
@@ -364,29 +525,33 @@ class Installer(tk.Tk):
                 lbl.config(fg=C["accent"], font=(FONT, 9, "bold"))
             else:
                 lbl.config(fg=C["muted"] if i < n else C["faint"], font=(FONT, 9))
+        if n == 3:
+            self.lang_box.pack_forget()
+        else:
+            self.lang_box.pack(side="right", anchor="s", pady=(0, 3))
         self.update_nav()
 
     def update_nav(self):
         p = self.page
         if p == 0:
-            self._style_btn(self.back_btn, "同意しない", True, False)
-            self._style_btn(self.next_btn, "同意する", True, True)
+            self._style_btn(self.back_btn, tr("btn_disagree"), True, False)
+            self._style_btn(self.next_btn, tr("btn_agree"), True, True)
         elif p == 1:
-            self._style_btn(self.back_btn, "戻る", True, False)
-            self._style_btn(self.next_btn, "次へ", True, True)
+            self._style_btn(self.back_btn, tr("btn_back"), True, False)
+            self._style_btn(self.next_btn, tr("btn_next"), True, True)
         elif p == 2:
-            self._style_btn(self.back_btn, "戻る", True, False)
-            self._style_btn(self.next_btn, "インストール", True, True)
+            self._style_btn(self.back_btn, tr("btn_back"), True, False)
+            self._style_btn(self.next_btn, tr("btn_install"), True, True)
         else:
             if self.running:
-                self._style_btn(self.back_btn, "戻る", False, False)
-                self._style_btn(self.next_btn, "インストール中…", False, True)
+                self._style_btn(self.back_btn, tr("btn_back"), False, False)
+                self._style_btn(self.next_btn, tr("btn_installing"), False, True)
             elif self.done:
-                self._style_btn(self.back_btn, "戻る", False, False)
-                self._style_btn(self.next_btn, "完了", True, True)
+                self._style_btn(self.back_btn, tr("btn_back"), False, False)
+                self._style_btn(self.next_btn, tr("btn_done"), True, True)
             else:
-                self._style_btn(self.back_btn, "戻る", True, False)
-                self._style_btn(self.next_btn, "もう一度", True, True)
+                self._style_btn(self.back_btn, tr("btn_back"), True, False)
+                self._style_btn(self.next_btn, tr("btn_retry"), True, True)
 
     def go_next(self):
         p = self.page
@@ -406,14 +571,14 @@ class Installer(tk.Tk):
             try:
                 launch_app(self.launch_exe)
             except OSError as e:
-                messagebox.showerror("起動に失敗", f"YDL を起動できませんでした:\n{e}")
+                messagebox.showerror(tr("launch_fail_title"), tr("launch_fail_msg", err=e))
         self.destroy()
 
     def go_back(self):
         if self.running:
             return
         if self.page == 0:
-            if messagebox.askyesno("セットアップを終了", "同意しない場合はインストールできません。\n終了しますか？"):
+            if messagebox.askyesno(tr("quit_title"), tr("quit_msg")):
                 self.destroy()
             return
         self.show_page(self.page - 1)
@@ -436,7 +601,7 @@ class Installer(tk.Tk):
             return
         initial = os.path.dirname(self.install_dir)
         path = filedialog.askdirectory(
-            title="インストール先のフォルダを選択",
+            title=tr("choose_dir_title"),
             initialdir=initial if os.path.isdir(initial) else os.path.expanduser("~"))
         if not path:
             return
@@ -455,7 +620,7 @@ class Installer(tk.Tk):
         self.done = False
         self.launch_exe = None
         self.clear_log()
-        self.step_label.config(text="準備しています…", fg=C["muted"])
+        self.step_label.config(text=tr("preparing"), fg=C["muted"])
         self.bar.config(mode="indeterminate")
         self.bar.start(12)
         self.update_nav()
@@ -465,7 +630,7 @@ class Installer(tk.Tk):
 
     def on_close(self):
         if self.running:
-            if not messagebox.askyesno("インストール中です", "インストールを中止して閉じますか？"):
+            if not messagebox.askyesno(tr("closing_title"), tr("closing_msg")):
                 return
             self.cancelled = True
             if self.proc is not None:
@@ -494,29 +659,29 @@ class Installer(tk.Tk):
         code = self.proc.wait()
         self.proc = None
         if self.cancelled:
-            raise BuildError("中止しました")
+            raise BuildError(tr("err_cancelled"))
         if code != 0:
-            raise BuildError(f"コマンドが失敗しました（終了コード {code}）。ログを確認してください。")
+            raise BuildError(tr("err_cmd", code=code))
 
     def worker(self, options):
         work = tempfile.mkdtemp(prefix="ydl_build_")
         self.work_dir = work
         try:
 
-            self.step(1, "Python を確認しています")
+            self.step(1, tr("s_python"))
             py = find_python()
             if py is None:
-                raise PythonMissing("tkinter 付きの Python 3 が見つかりません。")
+                raise PythonMissing(tr("python_not_found"))
             self.log("Python: " + " ".join(py))
 
-            self.step(2, "必要なライブラリをインストールしています")
+            self.step(2, tr("s_pip"))
             self.run(py + ["-m", "pip", "install", "-U", "--disable-pip-version-check",
                            "--progress-bar", "off", "yt-dlp", "imageio-ffmpeg", "pyinstaller"],
                      work)
 
             src = os.path.join(work, "src")
             os.makedirs(src, exist_ok=True)
-            for name in ("main.py", "uninstall.py", "icon.ico"):
+            for name in ("main.py", "uninstall.py", "i18n.py", "icon.ico"):
                 shutil.copy2(resource_path(name), os.path.join(src, name))
             hook = os.path.join(src, "ydl_tcl_hook.py")
             with open(hook, "w", encoding="utf-8") as f:
@@ -538,47 +703,45 @@ class Installer(tk.Tk):
                              "--add-data", f"{tcl[1]};_tk_data",
                              "--runtime-hook", hook]
             else:
-                self.log("（Tcl/Tk の場所を特定できませんでした。PyInstaller の自動検出に任せます）")
+                self.log(tr("tcl_unknown"))
 
-            self.step(3, "YDL.exe をビルドしています（数分かかります）")
+            self.step(3, tr("s_ydl"))
             self.run(py + common + ["--name", "YDL", "--add-data", f"{ico};.",
                                     "--hidden-import=yt_dlp", "--collect-all", "imageio_ffmpeg"]
                      + tcl_extra + [os.path.join(src, "main.py")], work)
 
-            self.step(4, "YDL-uninstaller.exe をビルドしています")
+            self.step(4, tr("s_unins"))
             self.run(py + common + ["--name", "YDL-uninstaller",
                                     os.path.join(src, "uninstall.py")], work)
 
-            self.step(5, "インストールしています")
+            self.step(5, tr("s_copy"))
             try:
                 os.makedirs(self.install_dir, exist_ok=True)
             except OSError as e:
-                raise BuildError(f"インストール先を作成できません: {e}\n"
-                                 "「戻る」で別の場所（書き込めるフォルダ）を選んでください。")
+                raise BuildError(tr("err_mkdir", err=e))
             for name in ("YDL.exe", "YDL-uninstaller.exe"):
                 exe_src = os.path.join(dist, name)
                 if not os.path.exists(exe_src):
-                    raise BuildError(f"{name} が作成されませんでした。ログを確認してください。")
+                    raise BuildError(tr("err_noexe", name=name))
                 try:
                     shutil.copy2(exe_src, os.path.join(self.install_dir, name))
                 except PermissionError:
-                    raise BuildError("YDL が起動している可能性があります。"
-                                     "YDL を終了してから、もう一度実行してください。")
-                self.log(f"コピーしました: {name}")
+                    raise BuildError(tr("err_perm"))
+                self.log(tr("copied", name=name))
 
             try:
                 register_uninstall(self.install_dir)
-                self.log("「設定 > アプリ」に登録しました")
+                self.log(tr("reg_ok"))
             except Exception as e:
-                self.log(f"（アプリ一覧への登録に失敗しました: {e}）")
+                self.log(tr("reg_fail", err=e))
 
             exe = os.path.join(self.install_dir, "YDL.exe")
             if options["shortcut"]:
                 try:
                     create_desktop_shortcut(exe)
-                    self.log("デスクトップにショートカットを作成しました")
+                    self.log(tr("sc_ok"))
                 except Exception as e:
-                    self.log(f"（ショートカットの作成に失敗しました: {e}）")
+                    self.log(tr("sc_fail", err=e))
 
             self.events.put(("done", exe, options["launch"]))
         except PythonMissing as e:
@@ -597,7 +760,8 @@ class Installer(tk.Tk):
                     self.append_log(ev[1])
                 elif kind == "step":
                     self.step_label.config(
-                        text=f"ステップ {ev[1]} / {TOTAL_STEPS}  {ev[2]}", fg=C["muted"])
+                        text=tr("step_fmt", n=ev[1], total=TOTAL_STEPS, text=ev[2]),
+                        fg=C["muted"])
                     self.append_log(f"=== {ev[1]}/{TOTAL_STEPS}  {ev[2]} ===")
                 elif kind == "done":
                     self.on_done(ev[1], ev[2])
@@ -617,27 +781,20 @@ class Installer(tk.Tk):
         self.done = True
         self.launch_exe = exe if launch else None
         self.bar["value"] = 100
-        msg = "インストールが完了しました。"
-        msg += "「完了」を押すと YDL が起動します。" if launch else "「完了」を押して閉じてください。"
+        msg = tr("done_launch") if launch else tr("done_close")
         self.step_label.config(text=msg, fg=C["accent"])
-        self.append_log(f"完了: {exe}")
+        self.append_log(tr("done_log", exe=exe))
         self.update_nav()
 
     def on_error(self, message, python_missing):
         self.finish_progress()
         self.bar["value"] = 0
-        self.step_label.config(text="失敗しました: " + message, fg=C["error"])
-        self.append_log("失敗: " + message)
+        self.step_label.config(text=tr("fail_status", message=message), fg=C["error"])
+        self.append_log(tr("fail_log", message=message))
         self.update_nav()
 
         if python_missing:
-            if messagebox.askyesno(
-                    "Python が必要です",
-                    "ビルドには Python 3 が必要です。\n\n"
-                    "Python のダウンロードページを開きますか？\n\n"
-                    "インストールのときは、次の2点に注意してください。\n"
-                    "・「Add python.exe to PATH」にチェックを入れる\n"
-                    "・「tcl/tk and IDLE」を外さない"):
+            if messagebox.askyesno(tr("py_title"), tr("py_msg")):
                 webbrowser.open("https://www.python.org/downloads/")
 
 if __name__ == "__main__":

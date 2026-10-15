@@ -1,15 +1,39 @@
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
 import tkinter as tk
 from tkinter import messagebox
 
+import i18n
+from i18n import Translator
+
 REG_PATH = r"Software\Microsoft\Windows\CurrentVersion\Uninstall\YDL"
 NO_WINDOW = 0x08000000
 NEW_GROUP = 0x00000200
 BREAKAWAY = 0x01000000
-TITLE = "YDL アンインストール"
+
+STRINGS = {
+    "ja": {
+        "title": "YDL アンインストール",
+        "ask": ("YDL をこのパソコンから削除しますか？\n\n"
+                "削除する場所:\n{install_dir}\n\n"
+                "YDL フォルダごと削除されます（YDL.exe と YDL-uninstaller.exe）。\n"
+                "ダウンロードしたファイル（デスクトップの YDL フォルダなど）は削除されません。"),
+        "done": "アンインストールが完了しました。",
+    },
+    "en": {
+        "title": "YDL Uninstall",
+        "ask": ("Remove YDL from this computer?\n\n"
+                "Location to be removed:\n{install_dir}\n\n"
+                "The whole YDL folder will be deleted (YDL.exe and YDL-uninstaller.exe).\n"
+                "Downloaded files (such as the YDL folder on your desktop) will not be deleted."),
+        "done": "YDL has been uninstalled.",
+    },
+}
+
+tr = Translator(STRINGS)
 
 def desktop_dir():
     r = subprocess.run(
@@ -18,7 +42,6 @@ def desktop_dir():
         creationflags=NO_WINDOW, timeout=30)
     path = r.stdout.strip()
     return path or os.path.join(os.path.expanduser("~"), "Desktop")
-
 
 def schedule_delete(install_dir):
     exe = os.path.join(install_dir, "YDL.exe")
@@ -46,19 +69,14 @@ def schedule_delete(install_dir):
         except OSError:
             continue
 
-
 def main():
     root = tk.Tk()
     root.withdraw()
 
     install_dir = os.path.dirname(os.path.abspath(sys.executable))
+    title = tr("title")
 
-    if not messagebox.askyesno(
-            TITLE,
-            "YDL をこのパソコンから削除しますか？\n\n"
-            f"削除する場所:\n{install_dir}\n\n"
-            "YDL フォルダごと削除されます（YDL.exe と YDL-uninstaller.exe）。\n"
-            "ダウンロードしたファイル（デスクトップの YDL フォルダなど）は削除されません。"):
+    if not messagebox.askyesno(title, tr("ask", install_dir=install_dir)):
         return
 
     try:
@@ -74,8 +92,10 @@ def main():
     except Exception:
         pass
 
+    shutil.rmtree(i18n.CONFIG_DIR, ignore_errors=True)
+
     schedule_delete(install_dir)
-    messagebox.showinfo(TITLE, "アンインストールが完了しました。")
+    messagebox.showinfo(title, tr("done"))
 
 if __name__ == "__main__":
     main()
