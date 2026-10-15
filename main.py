@@ -31,7 +31,7 @@ C = dict(
 
 STRINGS = {
     "ja": {
-        "window_title": "YouTube ダウンローダー V1.0.0",
+        "window_title": "YouTube ダウンローダー V2.0.0",
         "app_title": "YouTube ダウンローダー",
         "mode_mp3": "MP3  音声",
         "mode_mp4": "MP4  動画",
@@ -62,7 +62,7 @@ STRINGS = {
         "choose_dir_title": "保存先を選択",
     },
     "en": {
-        "window_title": "YouTube Downloader V1.0.0",
+        "window_title": "YouTube Downloader V2.0.0",
         "app_title": "YouTube Downloader",
         "mode_mp3": "MP3  Audio",
         "mode_mp4": "MP4  Video",

@@ -10,7 +10,7 @@ import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
 
 from i18n import Translator, lang_switch
-
+## 1.0.0
 APP_NAME = "YDL"
 FONT = "Yu Gothic UI"
 AUTHOR = "すも"
