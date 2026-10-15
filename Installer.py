@@ -12,7 +12,7 @@ from tkinter import ttk, messagebox, filedialog
 APP_NAME = "YDL"
 FONT = "Yu Gothic UI"
 AUTHOR = "すも"
-AUTHOR_URL = "https://github.com/Sumomodayo/youtube_downloader"
+AUTHOR_URL = "https://github.com/Sumomodayo/Youtube-Downloader"
 PAD = 24
 TOTAL_STEPS = 5
 NO_WINDOW = 0x08000000
