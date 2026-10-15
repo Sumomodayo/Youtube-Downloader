@@ -15,7 +15,7 @@ import imageio_ffmpeg as ffmpeg
 
 FONT = "Yu Gothic UI"
 AUTHOR = "すも"
-AUTHOR_URL = "https://github.com/Sumomodayo/youtube_downloader"
+AUTHOR_URL = "https://github.com/Sumomodayo/Youtube-Downloader"
 
 C = dict(
     bg="#171A23",
