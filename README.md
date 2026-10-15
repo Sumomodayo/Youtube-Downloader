@@ -2,6 +2,20 @@
 
 YouTubeの動画を **MP3（音声）** または **MP4（動画）** で保存できる、Windows向けのデスクトップアプリです。
 
+<table>
+  <tr>
+    <td>
+      <img src="https://github.com/user-attachments/assets/dcfa2ecb-87f5-4397-86de-5d02813a8f28" width="280" alt="画像1">
+    </td>
+    <td>
+      <img src="https://github.com/user-attachments/assets/8e8e8e2f-db62-4ae6-85a1-bd30da578673" width="280" alt="画像2">
+    </td>
+  </tr>
+</table>
+
+![Views](https://komarev.com/ghpvc/?username=Sumomodayo&repo=Youtube-Downloader&label=Repository%20Views&color=7c3aed&style=flat)
+![GitHub Downloads](https://img.shields.io/github/downloads/Sumomodayo/Youtube-Downloader/total?label=Downloads&color=7c3aed)
+
 ## 機能
 
 * MP3 / MP4 の切り替え
